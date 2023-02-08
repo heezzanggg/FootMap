@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="shared/_layout">
+<style>
+    .table{
+        position: absolute;
+     width:70%;
+    }
+</style>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>공지 사항</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <h2>공지 사항</h2>
+    <div class="empty" data-th-cellpadding="20px" style="padding: 20px">
+    <table class="table table-striped" border=2 th:each="notice:${notice}">
+
+    <tr>
+        <th width="10%"> 제 목 </th>
+        <th colspan="5">[[${notice.n_title}]]</th>
+
+    </tr>
+        <tr border="1">
+            <td width="10%">작성자</td>
+            <td>[[${notice.n_writer}]]</td><br>
+            <td>작성일</td>
+            <td>[[${notice.n_regdate}]]</td><br>
+            <td>조회수</td>
+            <td>[[${notice.n_count}]]</td>
+        </tr>
+    <tr>
+        <td width="10%">내용</td>
+        <td colspan="5">[[${notice.n_cont}]]</td>
+
+    </tr>
+
+    </table>
+    </div>
+    <div class="list" style="text-align: right">
+        <button type="button" onclick="location.href='Notice'" style="text-align: center"> 목록으로 </button>
+
+    </div>
+</div>
+</body>
+</html>

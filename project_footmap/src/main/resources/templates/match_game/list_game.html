@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns: th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      layout:decorate="shared/_layout" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Hello</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="row mt-3">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          나의 팀
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <div class="form-floating">
+              <select id="option1"  class="form-select" required>
+                <div th:if="${!#lists.isEmpty(teams)}">
+                  <option disabled selected></option>
+                  <th:block th:each="teams:${teams}">
+                    <option th:value="${teams.t_code}" onchange="get_option2">[[${teams.t_name}]]</option>
+                  </th:block>
+                </div>
+                <div th:if="${#lists.isEmpty(teams)}">
+                  <option>팀 없음</option>
+                </div>
+              </select>
+              <label for="option1" class="form-label">팀</label>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div id="option2_1" class="form-floating">
+            </div>
+          </div>
+          <div class="mb-3">
+            <div id="option2_2" class="form-floating">
+            </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-md">
+              <div class="mb-3">
+                <div id="option2_3" class="form-floating">
+                </div>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="mb-3">
+                <div id="option2_4" class="form-floating">
+                </div>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="mb-3">
+                <div id="option2_5" class="form-floating">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- end card 1-->
+      <br>
+      <div class="card">
+        <div class="card-header">
+          등록 게임
+        </div>
+        <div class="card-body">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th scope="col">상대팀</th>
+              <th scope="col">경기장</th>
+              <th scope="col">경기날짜</th>
+              <th scope="col">경기시간</th>
+              <th scope="col">게임수락</th>
+            </tr>
+            </thead>
+            <tbody id="option3" >
+            </tbody>
+          </table>
+        </div>
+      </div><!-- end card 2-->
+      <br>
+      <div class="card">
+        <div class="card-header">
+          신청 게임
+        </div>
+        <div class="card-body">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th scope="col">상대팀</th>
+              <th scope="col">경기장</th>
+              <th scope="col">경기날짜</th>
+              <th scope="col">경기시간</th>
+              <th scope="col">매칭여부</th>
+            </tr>
+            </thead>
+            <tbody id="option4">
+            </tbody>
+          </table>
+        </div>
+      </div><!-- end card 3-->
+    </div><!--end col-->
+  </div><!--end row-->
+</div><!--end fragment-->
+
+<script layout:fragment="script" th:inline="javascript">
+  $(document).ready(function (){
+    $('#option1').change(function (){
+      const optionValue1 = $(this).val();
+
+      $.ajax({
+        type:"POST",
+        url:"/game/get_gameOption",
+        async:true,
+        contentType:"application/json; charset:UTF-8",
+        dataTypes:"json",
+        data:optionValue1,
+        success:function (result){
+          console.log(result);
+          let html2 = ''; //등록게임 담을 변수
+          let html3 = ''; //신청게임 담을 변수
+          let html1_1=''; //팀정보 담을 변수
+          let html1_2='';
+          let html1_3='';
+          let html1_4='';
+          let html1_5='';
+
+          // console.log("등록게임에 쪽지보낸 g_code~"+result[5][0][0].g_code);
+          // console.log("등록게임에 쪽지보낸 j_sendteam~"+result[5][0][0].j_sendteam);
+          // console.log("등록게임에 쪽지보낸 g_code~"+result[5][1][0].g_code);
+          // console.log("등록게임에 쪽지보낸 j_sendteam~"+result[5][1][0].j_sendteam);
+
+          $('#option2_1').empty();//기존 테이블 데이터 삭제
+          $('#option2_2').empty();//기존 테이블 데이터 삭제
+          $('#option2_3').empty();//기존 테이블 데이터 삭제
+          $('#option2_4').empty();//기존 테이블 데이터 삭제
+          $('#option2_5').empty();//기존 테이블 데이터 삭제
+          $('#option3').empty();//기존 테이블 tbcdy 데이터 삭제
+          $('#option4').empty();//기존 테이블 tbcdy 데이터 삭제
+
+          //new 팀정보 부분
+          html1_1 += '<input type="text" class="form-control" readonly value='+result[0][0].u_nick+'>';
+          html1_1 += '<label>주장</label>';
+          $('#option2_1').append(html1_1);
+
+          html1_2 += '<textarea class="form-control"  style="height:150px"readonly>'+result[0][0].t_intro+'</textarea>';
+          html1_2 += '<label>팀소개</label>';
+          $('#option2_2').append(html1_2);
+
+          html1_3 += '<input type="text" class="form-control" readonly value='+result[0][0].t_vic+'>';
+          html1_3 += '<label>승</label>';
+          $('#option2_3').append(html1_3);
+
+          html1_4 += '<input type="text" class="form-control" readonly value='+result[0][0].t_draw+'>';
+          html1_4 += '<label>무</label>';
+          $('#option2_4').append(html1_4);
+
+          html1_5 += '<input type="text" class="form-control" readonly value='+result[0][0].t_lose+'>';
+          html1_5 += '<label>패</label>';
+          $('#option2_5').append(html1_5);
+
+          //등록게임 부분
+          if(result[1].length!=0){
+            for(let i=0; i<result[1].length; i++){
+              var magam =''; //마감여부에따라 나오는 값 저장 할 변수
+              var search =''; //매칭여부에 따라 나오는 값 저장 할 변수
+
+              //마감여부
+              if(result[1][i].g_magam==3){
+                magam = "매칭실패";
+              }else if (result[1][i].g_magam==2){
+                magam="매칭완료";
+                search = result[3][i];
+              }else{
+                //신청팀 x
+                if(result[5][i]==null){
+                  search="신청팀이 없습니다.";
+                  magam = "매칭 전";
+                }else{
+                  //신청팀 o
+                  search = result[6][i];
+                  magam='<button class="btn btn-outline-secondary searchBtnNew">수락</button><button class="btn btn-outline-secondary searchBtnNew">거절</button>';
+                }
+              }
+
+              html2 += '<tr>';
+              html2 += '<td>'+search+'</td>';
+              html2 += '<td>'+result[1][i].f_name+'</td>';
+              html2 += '<td>'+result[1][i].g_date+'</td>';
+              html2 += '<td>'+result[1][i].g_time+'</td>';
+              html2 += '<td>'+magam+'</td>'
+              html2 += '</tr>';
+            }//end for 2
+          }else{
+            html2 = '<tr><td colspan="4">등록한 게임이 없습니다.</td></tr>';
+          }
+          $('#option3').append(html2);
+
+          //신청게임 부분
+          if(result[2].length==0){
+            html3 = '<tr><td colspan="4">신청한 게임이 없습니다.</td></tr>';
+          }else{
+            for(let i=0; i<result[2].length; i++){
+              var magam='';
+
+              if (result[2][i].g_magam == 3 ){
+                magam = "매칭실패";
+              } else if (result[2][i].g_magam == 2){
+                magam = "매칭완료";
+              }else {magam="매칭전";}
+
+              html3 += '<tr>';
+              html3 += '<td>'+result[4][i]+'</td>';
+              html3 += '<td>'+result[2][i].f_name+'</td>';
+              html3 += '<td>'+result[2][i].g_date+'</td>';
+              html3 += '<td>'+result[2][i].g_time+'</td>';
+              html3 += '<td>'+magam+'</td>';
+              html3 += '</tr>';
+            }//end for 3
+          }
+          $('#option4').append(html3);
+        },//end success
+        error:function (){
+          console.log("error");
+        }
+      })//end ajax
+    })
+  })//end ready
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="footmap.footmap_spring.dao.matchDao.MatchMapper">
+    <select id="match" resultType="footmap.footmap_spring.dto.matchDto.match">
+        SELECT * FROM TEAM t
+        WHERE t.T_CODE NOT IN (SELECT T_CODE FROM TEAM_MANAGEMENT WHERE U_CODE =#{u_code});
+    </select>
+
+    <select id="getTeamdata" resultType="footmap.footmap_spring.dto.matchDto.match">
+        SELECT U.U_CODE,U.U_NICK,T.T_NAME,T.T_CODE,T.T_IMG,T.T_STADIUM,T.T_VIC,T.T_DRAW,T.T_LOSE,T.T_INTRO
+        from USER U, TEAM T, TEAM_MANAGEMENT TM
+        WHERE U.U_CODE=TM.U_CODE and TM.T_CODE=T.T_CODE AND TM.T_CAP='Y'
+          AND T_NAME=#{t_name};
+
+    </select>
+
+    <select id="getMyTeam" resultType="footmap.footmap_spring.dto.matchDto.match">
+        SELECT U.U_CODE,U.U_NICK,T.T_NAME,T.T_CODE,T.T_IMG,T.T_STADIUM,T.T_VIC,T.T_DRAW,T.T_LOSE,T.T_INTRO
+        FROM USER U, TEAM_MANAGEMENT TM, TEAM T
+        WHERE U.U_CODE=TM.U_CODE and TM.T_CODE=T.T_CODE AND TM.T_CAP='Y' AND U.U_CODE= #{u_code};
+    </select>
+
+    <select id="getTeamwon" resultType="footmap.footmap_spring.dto.matchDto.match">
+        SELECT U_CODE
+        FROM TEAM_MANAGEMENT
+        WHERE T_CODE = #{t_code}
+          AND T_CAP='N';
+    </select>
+
+    <select id="getRealTeamwon" resultType="footmap.footmap_spring.dto.matchDto.match">
+        SELECT *
+        FROM USER
+        WHERE U_CODE =#{u_codes};
+    </select>
+
+    <select id="getTeamcode" parameterType="footmap.footmap_spring.dto.matchDto.match" resultType="int">
+        SELECT T_CODE
+        FROM TEAM
+        WHERE T_NAME =#{t_name};
+    </select>
+
+    <delete id="deleteteamwon">
+        DELETE FROM TEAM_MANAGEMENT
+        WHERE T_CODE=#{t_code}
+          AND U_CODE=#{u_code};
+    </delete>
+
+    <insert id="insertteamwon" parameterType="footmap.footmap_spring.dto.matchDto.match">
+        INSERT INTO TEAM_MANAGEMENT(T_CODE,U_CODE,T_CAP)
+        VALUES (#{t_code},#{u_code},'N');
+    </insert>
+
+    <select id="usercodecheck" parameterType="footmap.footmap_spring.dto.matchDto.match" resultType="int">
+        SELECT COUNT(U_CODE) FROM TEAM_MANAGEMENT WHERE U_CODE=#{u_code} AND T_CODE = #{t_code};
+    </select>
+
+    <select id="tnamecheck" parameterType="footmap.footmap_spring.dto.matchDto.match" resultType="int">
+        SELECT COUNT(T_NAME) FROM TEAM WHERE T_NAME=#{t_name};
+    </select>
+
+    <select id="SearchTeam" resultType="footmap.footmap_spring.dto.matchDto.match">
+        SELECT * FROM TEAM WHERE T_NAME LIKE CONCAT('%',#{t_name},'%');
+</select>
+
+    <select id="getcaptaincode" parameterType="footmap.footmap_spring.dto.matchDto.match" resultType="int">
+        SELECT U_CODE
+        FROM TEAM_MANAGEMENT
+        WHERE T_CODE=#{teamcode} AND T_CAP='Y';
+    </select>
+
+    <delete id="deleteteam">
+        DELETE FROM TEAM
+        WHERE T_CODE=#{t_code};
+    </delete>
+
+    <delete id="deleteteammanagement">
+        DELETE FROM TEAM_management
+        WHERE T_CODE=#{t_code};
+    </delete>
+
+    <delete id="modifyteamname" parameterType="footmap.footmap_spring.dto.matchDto.match">
+        UPDATE TEAM
+        SET T_NAME = #{content}
+        WHERE T_NAME = #{variable};
+</delete>
+
+
+
+
+
+
+</mapper>

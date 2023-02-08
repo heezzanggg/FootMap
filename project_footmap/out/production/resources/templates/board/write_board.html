@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns: th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      layout:decorate="shared/_layout" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="row mt-3">
+        <div class="col">
+            <form action="/board/write" method="POST">
+            <div class="card">
+                <div class="card-header">
+                    Register Game
+                </div>
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="hidden" name="u_code" th:value="${user.u_code}" readonly/>
+                            <input type="text" id="title1" class="form-control"  name="b_title" required>
+                            <label for="title1" class="form-label">글제목</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="text" id="writer1" class="form-control"  name="b_nick" placeholder="Writer"
+                                   th:value="${user.u_nick}" readonly/>
+                            <label for="writer1" class="form-label">작성자</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="Textarea2" style="height:300px" name="b_contents" maxlength="4000"  required /></textarea>
+                            <label for="Textarea2">내용</label>
+                        </div>
+                    </div>
+                </div>
+            </div> <!--end card-->
+            <br>
+            <div class="mb-3" align="right">
+                <input type="submit" class="btn btn-outline-secondary" value="등록"/>
+                <input type="button" class="btn btn-outline-secondary" value="취소" onclick="location.href='/board/list'"/>
+            </div>
+            </form>
+        </div><!--end col-->
+    </div> <!--end row mt-3-->
+</div> <!--end fragment-->
+<script layout:fragment="script" th:inline="javascript">
+    const auth=[[${#authentication.principal}]]
+    const errors = [[${errors}]]
+    console.log(errors)
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="footmap.footmap_spring.dao.JJokjiDao.JJokjiMapper">
+
+    <insert id="JJokjiin" parameterType="footmap.footmap_spring.dto.JJokjiDao.JJokji">
+        INSERT INTO JJokJJi(J_SENDNAME,J_BACKNAME,J_CONT,J_SENDTEAM,J_CHOICE)
+        VALUES (#{u_code},#{captiaincode},#{content},#{teamcode},1);
+    </insert>
+
+    <select id="getgameJJokji" resultType="footmap.footmap_spring.dto.JJokjiDao.JJokji">
+        SELECT *
+        FROM JJokJJi
+        WHERE J_BACKNAME = #{u_code}
+          AND J_CHOICE = 2;
+    </select>
+
+    <select id="getJJokji" resultType="footmap.footmap_spring.dto.JJokjiDao.JJokji">
+        SELECT *
+        FROM JJokJJi
+        WHERE J_BACKNAME = #{u_code}
+          AND J_CHOICE = 1;
+    </select>
+
+    <select id="getJJokjiList" resultType="footmap.footmap_spring.dto.JJokjiDao.JJokji">
+        SELECT *
+        FROM JJokJJi
+        WHERE J_BACKNAME = #{u_code}
+    </select>
+
+    <update id="jjokcheck" parameterType="footmap.footmap_spring.dto.JJokjiDao.JJokji">
+        UPDATE JJOKJJi
+        SET
+            J_CHECK='Y'
+        WHERE J_CODE=#{jcode};
+    </update>
+
+    <!--게임신청 보내기-->
+    <insert id="requestGame" parameterType="footmap.footmap_spring.dto.JJokjiDao.JJokji">
+        INSERT INTO JJokJJi (J_SENDNAME,J_BACKNAME,J_SENDTEAM,J_BACKTEAM,J_CONT,J_CHOICE,G_CODE)
+        VALUES(#{j_sendName},#{j_backName},#{j_sendTeamCode},#{j_backTeamCode},#{j_cont},2,#{g_code});
+    </insert>
+
+    <!--게임코드로 신청게임 정보 가져오기-->
+    <select id="getApplyGameJjokjiListByGameCode" parameterType="int" resultType="footmap.footmap_spring.dto.JJokjiDao.JJokji">
+        SELECT J_CODE, J_SENDTEAM,G_CODE
+        FROM JJokJJi
+        WHERE G_CODE = #{g_code};
+    </select>
+
+
+
+</mapper>

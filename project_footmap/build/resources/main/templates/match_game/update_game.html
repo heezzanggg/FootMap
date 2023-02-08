@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns: th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      layout:decorate="shared/_layout" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="col">
+        <form action="/game/update" method="post">
+        <div class="card">
+            <div class="card-header">
+                Game Modify
+            </div>
+            <div class="card-body">
+                <div class="mb-3" hidden>
+                    <label for="game num" class="form-label">번호</label>
+                    <input id="game num" type="text" name="g_code" class="form-control" th:value="${gameList.g_code}" />
+                </div>
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <input type="text" id="team name" class="form-control" th:value="${gameList.t_name}" disabled/>
+                        <label for="team name" >등록팀</label>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md">
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <select name="f_area" id="option1" class="form-select">
+                                    <option th:value="${gameList.f_area}">[[${gameList.f_area}]]</option>
+                                    <option  value ="서울" onchange="get_option2(f_area.value, f_code)" >서울</option>
+                                    <option  value ="부산" onchange="get_option2(f_area.value, f_code)" >부산</option>
+                                    <option  value ="대구/경북" onchange="get_option2(f_area.value, f_code)" >대구/경북</option>
+                                </select>
+                                <label for="option1" >지역</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md">
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <select name="f_code" id="option2" class="form-select" th:value="${gameList.f_name}">
+                                    <option th:value="${gameList.f_code}">[[${gameList.f_name}]]</option>
+                                </select>
+                                <label for="option2">경기장</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md">
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <select id="game people" class="form-select" name="g_peo">
+                                    <option th:value="${gameList.g_peo}" >[[${gameList.g_peo}]]</option>
+                                    <div th:if="${gameList.g_peo}==3vs3">
+                                        <option value="4vs4">4vs4</option>
+                                        <option value="5vs5">5vs5</option>
+                                    </div>
+                                    <div th:if="${gameList.g_peo}==4vs4">
+                                        <option value="3vs3">3vs3</option>
+                                        <option value="5vs5">5vs5</option>
+                                    </div>
+                                    <div th:if="${gameList.g_peo}==5vs5">
+                                        <option value="3vs3">3vs3</option>
+                                        <option value="4vs4">4vs4</option>
+                                    </div>
+                                </select>
+                                <label for="game people" >인원수</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-2">
+                    <div class="col-md">
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <input type="date" id="game date" class="form-control" name ="g_date" th:min="${tomorrows}" th:value="${gameList.g_date}"/>
+                                <label for="game date">경기날짜</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md">
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <input type="time"  id="game time" class="form-control" name="g_time"th:value="${gameList.g_time}"/>
+                                <label for="game time">경기시간</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <textarea class="form-control" id="game intro"  style="height:300px" maxlength="4000" name="g_intro" th:value="${gameList.g_intro}">[[${gameList.g_intro}]]</textarea>
+                        <label for="game intro" >경기소개</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div th:if="${gameList.g_magam}==1">
+                        <div class="form-floating">
+                            <input type="text" id="game magam1" class="form-control" th:value="매칭전" readonly/>
+                            <label for="game magam1">경기마감여부</label>
+                        </div>
+
+<!--                        <input type="text" class="from-control" th:value="${gameList.g_magam}" name="g_magam" hidden/>-->
+                    </div>
+                    <div th:if="${gameList.g_magam}!=1">
+                        <div class="form-floating">
+                            <input type="text" id="game magam2" class="form-control" th:value="매칭완료" readonly/>
+                            <label for="game magam2">경기마감여부</label>
+                        </div>
+<!--                        <input type="text"  class="from-control" th:value="${gameList.g_magam}" name="g_magam" hidden/>-->
+                    </div>
+                </div>
+            </div><!--end card-body-->
+        </div><!--end card-->
+            <br>
+            <div class="mb-3" align="right">
+                <a onclick="clickEvent()">
+                    <input type="submit" value="수정" class="btn btn-outline-secondary"/>
+                </a>
+                <input type="button" value="취소" class="btn btn-outline-secondary" th:onclick="|location.href='@{/game/view(g_code=${gameList.g_code})}'|">
+            </div>
+        </form>
+    </div><!--end col-->
+</div><!--end fragment-->
+
+<script layout:fragment="script" th:inline="javascript">
+
+    function clickEvent(){
+        alert('수정 완료되었습니다');
+    }
+
+    $(document).ready(function(){
+        $('#option1').change(function(){
+            const optionValue1=$(this).val();
+
+            $.ajax({
+                type:"POST",//타입(get,post,put etc)
+                url:"/game/get_fNameOption",//요청할 서버url
+                async:true, //동기화 여부 (default : true)
+                contentType : "application/json; charset:UTF-8",
+                dataType:"json",//받아올 데이터 타입(html,xml,json,text etc, 생략가능
+                data:optionValue1,// JSON.stringify(submitObj.prgm_type),//요청할때 보낼 데이터
+                success:function(result){
+                    //결과 성공 콜백함수
+                    //대상 콤보박스의 자식 option 모두 지움
+                    $('#option2').children("option").remove();
+
+                    for (let x in result) {
+                        console.log(x);
+                        const option =
+                            "<option value='" + x + "'>" + result[x] + "</option>";
+
+                        //대상 콤보박스에 추가
+                        $('#option2').append(option);
+                    }
+                },
+                error: function(){
+                    //결과 에러 콜백함수
+                    console.log("error");
+                }
+            })
+        })
+    })
+
+
+</script>
+</body>
+</html>

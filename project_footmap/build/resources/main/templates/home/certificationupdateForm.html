@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link th:href="@{/css/styles.css}" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <style>
+    .jb-red {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <form action="/Certificationupdate" method="post">
+    <div class="form-group">
+      <input class="form-control" type="hidden" th:value="${cerification}" id="certification">
+
+      <label>비밀번호:</label>
+      <input class="form-control" type="password"  placeholder="현재 비밀번호를 입력해주세요" name="u_pw" id="u_pw">
+      <span class="jb-red" th:if="${cerification == true}">비밀번호확인</span>
+      <span class="jb-red" th:if="${cerification == false}">비밀번호가 틀립니다.</span>
+    </div>
+    <button type="submit" id="modifyButton2">인증하기</button><br>
+    <input type ="button" value = "취소" onClick="location.href='/Mypage'">
+  </form>
+</div>
+</body>
+
+</html>

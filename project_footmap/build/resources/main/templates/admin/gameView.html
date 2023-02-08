@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns: th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      layout:decorate="shared/_layout" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Hello</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="row mt-3">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          관리자 페이지 - 게임 상세 정보
+        </div><!--end card header-->
+        <div class="cad-body">
+          <br>
+          <div class="input-group mb-3">
+            <div class="form-floating">
+              <input type="text" class="form-control" th:value="${gameList.t_name}" readonly>
+              <label class="form-label">게임 등록 팀</label>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <div class="form-floating">
+              <input type="text" class="form-control" th:value="${gameList.f_name}" readonly>
+              <label class="form-label">경기장</label>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <div class="form-floating">
+              <input type="text" class="form-control" th:value="${#dates.format(g_date, 'yyyy년 MM월 dd일')}" readonly>
+              <label class="form-label">경기 날짜</label>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <div class="form-floating">
+              <input type="text" class="form-control" th:value="${#dates.format(g_time, 'HH시 mm분')}" readonly>
+              <label class="form-label">경기 시간</label>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <div class="form-floating">
+              <input type="text" class="form-control" th:value="${gameList.g_peo}" readonly>
+              <label class="form-label">인원수</label>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <div class="form-floating">
+              <textarea class="form-control" style="height: 150px" readonly>[[${gameList.g_intro}]]</textarea>
+              <label class="form-label">경기소개</label>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div th:if="${gameList.g_magam}==1">
+              <div class="form-floating">
+                <input type="text" id="game magam1"  class="form-control" th:value="마감전" readonly>
+                <label for="game magam1">경기마감여부</label>
+              </div>
+            </div>
+            <div th:if="${gameList.g_magam}!=1">
+              <div class="form-floating">
+                <input type="text" class="form-control" th:value="마감" readonly>
+                <label class="form-label">경기마감여부</label>
+              </div>
+            </div>
+          </div>
+        </div><!--ebd card body-->
+      </div><!--end card 1-->
+          <br>
+      <div class="card">
+        <div class="card-header">
+          관리자 페이지 - 팀별 개인 기록
+        </div><!--end card header-->
+        <div class="cad-body">
+          <br>
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  등록팀 ([[${gameList.t_name}]]) 팀원
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                <div class="accordion-body">
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th>팀원 닉네임(id)</th>
+                      <th>도움</th>
+                      <th>골</th>
+                      <th>커트</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="member:${dungTeamMember}">
+                      <td >[[${member.u_nick}]]([[${member.u_id}]])</td>
+                      <td>[[${member.u_assi}]]</td>
+                      <td>[[${member.u_goal}]]</td>
+                      <td>[[${member.u_cut}]]</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  <div th:if="${searchTeamName}==null">
+                    신청팀 없습니다.
+                  </div>
+                  <div th:if="${searchTeamName}!=null">
+                    신청팀 ([[${searchTeamName}]]) 팀원
+                  </div>
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
+                <div class="accordion-body">
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th>팀원 닉네임(id)</th>
+                      <th>도움</th>
+                      <th>골</th>
+                      <th>커트</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="member:${searchTeamMember}">
+                      <td >[[${member.u_nick}]]([[${member.u_id}]])</td>
+                      <td>[[${member.u_assi}]]</td>
+                      <td>[[${member.u_goal}]]</td>
+                      <td>[[${member.u_cut}]]</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!--end card-->
+      <div class="my-4">
+        <div class="float-end">
+          <div th:if="${gameList.g_magam}==2">
+            <input type="button" class="btn btn-outline-secondary" th:onclick="|location.href='@{/admin/updateGameViewForm(g_code=${gameList.g_code})}'|" value="수정"/>
+            <input type="button" class="btn btn-outline-secondary"  th:onclick="|location.href='@{/admin/deleteGame(g_code=${gameList.g_code})}'|" value="삭제"/>
+            <input type="button" class="btn btn-outline-secondary" th:onclick="|location.href='@{/admin/gameList(page=${pageRequestDTO.page})}'|" value="목록"/>
+          </div>
+          <div th:if="${gameList.g_magam}!=2">
+            <input type="button" class="btn btn-outline-secondary"  th:onclick="|location.href='@{/admin/deleteGame(g_code=${gameList.g_code})}'|" value="삭제"/>
+            <input type="button" class="btn btn-outline-secondary" th:onclick="|location.href='@{/admin/gameList(page=${pageRequestDTO.page})}'|" value="목록"/>
+          </div>
+        </div> <!-- end float end-->
+      </div> <!--end my-4-->
+    </div> <!--end col-->
+  </div><!--end row-->
+</div><!--layout:fragment="content"-->
+
+<script layout:fragment="script">
+</script>
+
+</body>
+</html>

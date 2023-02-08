@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="shared/_layout">
+<head>
+    <meta charset="UTF-8">
+    <title>풋살장 정보</title>
+
+
+</head>
+<body>
+<div layout:fragment="content">
+    <h2 class="title" th:each="Info:${Info}">
+        [[${Info.f_NAME}]]
+    </h2><BR><BR>
+    <div class="info">
+        <div class="table-responsive">
+            <table border="1" class="table table-striped">
+                <tr>
+                    <th>지역</th>
+                    <th>이 름</th>
+                    <th>주 소</th>
+                    <th>규 격</th>
+                    <th>연락처</th>
+                </tr>
+                <tr th:each="Info:${Info}">
+                    <td>[[${Info.f_AREA}]]</td>
+                    <td>[[${Info.f_NAME}]]</td>
+                    <td>[[${Info.f_ADD}]]</td>
+                    <td>[[${Info.f_SOU}]]</td>
+                    <td>[[${Info.f_TEL}]]</td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

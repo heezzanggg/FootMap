@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="footmap.footmap_spring.dao.userDao.UserMapper">
+    <select id="getUserList" resultType="footmap.footmap_spring.dto.userDto.User">
+        SELECT * FROM USER;
+    </select>
+
+    <select id="getTopuserList" resultType="footmap.footmap_spring.dto.userDto.User">
+        SELECT *
+        FROM USER
+        ORDER BY U_GOAL DESC LIMIT 0,3;
+    </select>
+
+    <insert id="saveUser" parameterType="footmap.footmap_spring.dto.userDto.User">
+        <!--회원가입-->
+        INSERT INTO USER(U_ID,U_PW,U_NICK,U_NAME,U_BIRTH,U_SEX,U_TEL,U_MAIL)
+        VALUES (#{u_id},#{u_pw},#{u_nick},#{u_name},#{u_birth},#{u_sex},#{u_tel},#{u_mail});
+    </insert>
+
+    <select id="getUserAccount" resultType="footmap.footmap_spring.dto.userDto.User">
+        SELECT *
+        FROM USER
+        WHERE U_ID = #{u_id};
+    </select>
+
+    <update id="UpdateUser" parameterType="footmap.footmap_spring.dto.userDto.User">
+        UPDATE USER
+        SET
+        U_PW=#{u_pw},
+        U_NICK=#{u_nick},
+        U_TEL=#{u_tel},
+        U_MAIL=#{u_mail}
+        WHERE
+        U_ID=#{u_id};
+    </update>
+
+    <update id="updateUser" parameterType="footmap.footmap_spring.dto.userDto.User">
+        UPDATE USER SET U_PW=#{str} WHERE U_NAME =#{u_name};
+    </update>
+
+    <select id="DoubleCheck" parameterType="footmap.footmap_spring.dto.userDto.User" resultType="int">
+        SELECT COUNT(u_id) FROM USER WHERE U_ID=#{u_id};
+    </select>
+
+    <select id="findid" parameterType="footmap.footmap_spring.dto.userDto.User" resultType="String">
+        SELECT U_ID FROM USER WHERE U_MAIL = #{u_mail} AND U_TEL = #{u_tel};
+    </select>
+
+    <select id="emailcheck" parameterType="footmap.footmap_spring.dto.userDto.User" resultType="int">
+        SELECT COUNT(u_mail) FROM USER WHERE U_MAIL=#{u_mail} AND U_NAME = #{u_name};
+    </select>
+
+    <select id="MailCheck" parameterType="footmap.footmap_spring.dto.userDto.User" resultType="int">
+        SELECT COUNT(u_mail) FROM USER WHERE U_MAIL=#{u_mail};
+    </select>
+
+    <select id="getTeamUserList" resultType="footmap.footmap_spring.dto.userDto.User">
+        SELECT *
+        FROM USER
+        WHERE U_CODE =#{u_codes};
+    </select>
+
+    <select id="getnick" parameterType="footmap.footmap_spring.dto.userDto.User" resultType="String">
+        SELECT U_NICK FROM USER WHERE U_CODE=#{jjoku_code};
+    </select>
+
+    <select id="getTeamMemberByTeamCode" resultType="footmap.footmap_spring.dto.userDto.User" parameterType="int">
+        SELECT U.U_ID, U.U_CODE, U.U_NICK, U.U_GOAL, U.U_ASSI,U.U_CUT
+        FROM TEAM_MANAGEMENT TM , USER U
+        WHERE TM.T_CODE = #{t_code} AND TM.U_CODE=U.U_CODE;
+    </select>
+
+    <!--개인기록 업데이트-->
+    <update id="updateUserRecord" parameterType="int">
+        UPDATE USER
+        SET U_ASSI = #{assi},U_GOAL = #{goal},U_CUT = #{cut}
+        WHERE U_CODE=#{code};
+
+        <!--foreach에는 list,array만 가능-->
+    </update>
+
+
+
+
+</mapper>
+

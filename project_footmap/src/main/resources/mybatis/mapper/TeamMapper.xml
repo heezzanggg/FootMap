@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="footmap.footmap_spring.dao.teamDao.TeamMapper">
+    <select id="getTeamList" resultType="footmap.footmap_spring.dto.teamDto.team">
+        SELECT * FROM TEAM;
+    </select>
+
+    <select id="getTopTeam" resultType="footmap.footmap_spring.dto.teamDto.team">
+        SELECT T_NAME
+        FROM TEAM
+        ORDER BY T_VIC DESC LIMIT 0,3;
+    </select>
+
+    <select id="getTeaminUser" resultType="footmap.footmap_spring.dto.teamDto.team" parameterType="footmap.footmap_spring.dto.teamDto.team">
+        SELECT T_NAME,TM.T_CAP,TM.T_CODE
+        FROM USER U, TEAM_MANAGEMENT TM, TEAM T
+        WHERE U.U_CODE=TM.U_CODE and TM.T_CODE=T.T_CODE
+          AND U.U_CODE = #{U_CODE};
+    </select>
+
+    <select id="chkCap" resultType="footmap.footmap_spring.dto.teamDto.team" parameterType="String">
+        SELECT T.T_CODE,T.T_NAME,TM.T_CAP,U.U_CODE,U.U_NICK
+        FROM USER U, TEAM_MANAGEMENT TM, TEAM T
+        WHERE U.U_CODE=#{U_CODE}
+          AND U.U_CODE=TM.U_CODE AND TM.T_CODE=T.T_CODE AND TM.T_CAP='Y';
+    </select>
+
+    <insert id="createTeam" parameterType="footmap.footmap_spring.dto.teamDto.team">
+        INSERT INTO TEAM(T_NAME,T_STADIUM,T_INTRO,T_IMG)
+        VALUES(#{t_name},#{t_stadium},#{t_intro},#{uploadFileName});
+    </insert>
+
+    <select id="findbyteam" parameterType="footmap.footmap_spring.dto.teamDto.team" resultType="int">
+        SELECT T_CODE FROM TEAM WHERE T_NAME=#{t_name};
+    </select>
+
+    <insert id="insertCap" parameterType="footmap.footmap_spring.dto.teamDto.team">
+        INSERT INTO TEAM_MANAGEMENT(T_CODE,U_CODE,T_CAP)
+        VALUES(#{t_code},#{u_code},'Y');
+    </insert>
+
+    <insert id="InsertTeamimg" parameterType="footmap.footmap_spring.dto.teamDto.team">
+        INSERT INTO TEAM(T_IMG)
+        VALUES(#{uploadFileName}) WHERE T_NAME = #{t_name};
+    </insert>
+
+    <!--로그인 한 유저의 팀 정보 가져오기-->
+    <select id="selectTeamInUsers" resultType="footmap.footmap_spring.dto.teamDto.team" parameterType="String">
+        select U.U_CODE, U.U_NICK, T.T_CODE, T.T_NAME
+        FROM USER U, TEAM T, TEAM_MANAGEMENT TM
+        WHERE U.U_CODE=#{U_CODE}
+          AND U.U_CODE=TM.U_CODE AND TM.T_CODE=T.T_CODE ;
+    </select>
+
+    <!--팀코드로 팀정보, 주장 가져오기-->
+    <select id="teamInfoByTeamCode" resultType="footmap.footmap_spring.dto.teamDto.team" parameterType="int">
+        SELECT T.T_CODE,T.T_NAME,U.U_CODE,U.U_NICK,T.T_IMG,T.T_INTRO,T.T_VIC,T.T_DRAW,T.T_LOSE
+        FROM TEAM T, TEAM_MANAGEMENT TM,USER U
+        WHERE T.T_CODE=#{T_CODE}
+          AND (T.T_CODE=TM.T_CODE AND TM.T_CAP='Y' AND TM.U_CODE=U.U_CODE);
+    </select>
+
+    <!--게임코드로 작성자 찾기(팀장)-->
+    <select id="writerByGameCode" resultType="String" parameterType="int">
+        SELECT U_CODE
+        FROM TEAM_MANAGEMENT
+        WHERE T_CODE=#{g_code} AND T_CAP='Y'
+    </select>
+
+    <select id="getteamname" parameterType="footmap.footmap_spring.dto.teamDto.team" resultType="String">
+        SELECT T_NAME
+        FROM TEAM
+        WHERE T_CODE=#{teamcode};
+    </select>
+
+    <insert id="accessteam" parameterType="footmap.footmap_spring.dto.teamDto.team">
+        INSERT INTO TEAM_MANAGEMENT(T_CODE,U_CODE,T_CAP)
+        VALUES(#{tcode},#{ucode},'N');
+    </insert>
+
+    <!--신청팀코드로 팀명-->
+    <select id="searchTeamNameByCode" resultType="String" parameterType="int">
+        select T_NAME
+        from TEAM
+        where T_CODE=#{t_code}
+    </select>
+
+    <!--팀이름으로 팀 코드 찾기-->
+    <select id="getTeamCodeByName" resultType="int" parameterType="String">
+        SELECT T_CODE
+        FROM TEAM
+        WHERE T_NAME=#{t_name}
+    </select>
+
+    <!--로그인한 유저의 코드로 본인이 팀장인 팀코드,팀이름 가져오기-->
+    <select id="getTeamByUserCode" resultType="footmap.footmap_spring.dto.teamDto.team" parameterType="String">
+        SELECT TM.T_CODE,T.T_NAME
+        FROM USER U,TEAM_MANAGEMENT TM, TEAM T
+        WHERE U.U_CODE = #{u_code} and U.U_CODE=TM.U_CODE and TM.T_CODE=T.T_CODE and TM.T_CAP='Y';
+    </select>
+
+
+</mapper>

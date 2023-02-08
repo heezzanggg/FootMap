@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="shared/_layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <style>
+        .olmessagef {color: red; font-style: Italic;}
+        .olmessaget {color: blue; font-style: Italic;}
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <form>
+        <div class="row mt-3">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>팀 등록</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h4>팀 로고 선택</h4>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="uploadFile">
+                                    <label class="custom-file-label" for="uploadFile"></label>
+                                </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-11">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="t_name" name="t_name" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                                    <label for="t_name">팀이름</label>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <input type="button" class="btn btn-group btn-group-lg btn-outline-secondary" value="중복확인" id="tnamecheck">
+                            </div>
+                            <span id ="olmessage"></span>
+                        </div>
+                        <div>
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="t_stadium"name="t_stadium" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"/>
+                                    <label>팀 홈구장</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <input type="hidden" class="form-control" id="u_code"name="u_code" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"th:value="${users.u_code}">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="t_cap" name="t_cap" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" th:value="${users.u_nick}" readonly>
+                                <label>주장</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <textarea  class="form-control" id="t_intro" name="t_intro" style="height: 300px" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg"></textarea>
+                                <label>팀소개글</label>
+                            </div>
+                        </div>
+                        <input type="button" id="maketeam" class="form-control" value="팀생성" disabled="disabled">
+                    </div>
+                </div><!--end card-->
+            </div><!--end col-->
+        </div><!--end row-->
+    </form>
+</div><!--end fragment-->
+
+
+<div class="input-group mb-3">
+    <label class="input-group-text">팀 엠블럼</label>
+    <input type="file" class="form-control">
+</div>
+
+<div class="input-group input-group-sm mb-3">
+
+</div>
+
+<div class="input-group input-group-sm mb-3">
+    <span class="input-group-text" >팀 홈구장</span>
+</div>
+<div class="input-group input-group-sm mb-3">
+</div>
+
+<div class="input-group input-group-sm mb-3">
+    <span class="input-group-text">팀 주장</span>
+</div>
+
+<div class="input-group input-group-lg">
+    <span class="input-group-text">팀 소개글</span>
+</div>
+
+
+<div class="modal fade" id="teamcreate" tabindex="-2" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabe2">팀생성완료</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                팀 생성이 완료되었습니다.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script layout:fragment="script">
+    $('#tnamecheck').on("click",function (){
+        const t_name = $('#t_name').val();
+        $.ajax({
+            type:"get",
+            url:"/Team/Tnamecheck",
+            data:{t_name:t_name},
+            success:function (data){
+                if (data == 1) {
+                    $("#olmessage").text("이미 사용중인 팀이름 입니다.");
+                    $("#olmessage").addClass("olmessagef");
+                    $("#olmessage").removeClass("olmessaget");
+                    $("#maketeam").attr("disabled",true);
+                } else {
+                    $("#olmessage").text("사용 가능한 팀이름 입니다.");
+                    $("#olmessage").addClass("olmessaget");
+                    $("#olmessage").removeClass("olmessagef");
+                    $("#maketeam").attr("disabled",false);
+
+                }
+            },error:function (data){
+                alert("잘못된 팀명입니다.");
+            }
+        })
+    })
+
+
+    document.querySelector("input[type=file]").addEventListener("change", function () {
+        let fileInput = document.querySelector("input[id=uploadFile]");
+        console.log(fileInput);
+        let fileObj = fileInput.files[0];
+        console.log(fileObj);
+        let formData = new FormData();
+        formData.append("uploadFile", fileObj);
+        $('#maketeam').on("click",function (){
+                const t_name = $('#t_name').val();
+                const t_intro = $('#t_intro').val();
+                const t_stadium = $('#t_stadium').val();
+                const u_code = $('#u_code').val();
+                formData.append("t_name", t_name);
+                formData.append("t_intro", t_intro);
+                formData.append("t_stadium", t_stadium);
+                formData.append("u_code", u_code);
+                $.ajax({
+                    url: '/ajax/uploadTest',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    type: 'POST',
+                    dataType: 'json'
+                });
+                location.href="/Team/t_search";
+
+
+        })
+
+    });
+</script>
+
+</body>
+</html>

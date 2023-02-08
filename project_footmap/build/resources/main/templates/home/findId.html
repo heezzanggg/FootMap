@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <meta charset="utf-8" />
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <link rel="stylesheet" href="./bootstrapt/css/bootstrap.min.css" />
+  <script src="./bootstrapt/js/bootstrap.min.js"></script>
+</head>
+<body class ="align-middle">
+<div class="container-fluid d-flex justify-content-center" style="height: 100vh">
+<div class="card align-self-center">
+  <div class="card-header">
+    아이디찾기
+  </div>
+
+<!--  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">-->
+<!--    <div class="modal-dialog modal-dialog-centered" role="document">-->
+<!--      <div class="modal-content">-->
+<!--        <div class="modal-header">-->
+<!--          <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>-->
+<!--          <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--            <span aria-hidden="true">&times;</span>-->
+<!--          </button>-->
+<!--        </div>-->
+<!--        <div class="modal-body">-->
+<!--          ...-->
+<!--        </div>-->
+<!--        <div class="modal-footer">-->
+<!--          <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>-->
+<!--          <button type="button" class="btn btn-primary">로그인하기</button>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+
+
+
+  <div>
+    <form>
+      <span class="">회원가입시 작성했던 메일을 입력해주세요.</span><br>
+      <input type="email" name="u_mail" id ="u_mail" placeholder="Email을 입력해주세요."><br>
+      <span class="">회원가입시 작성했던 전화번호를 입력해주세요.</span><br>
+      <input type="text" name="u_tel" id="u_tel"placeholder="ex)010-0000-0000"><br>
+      <button type="button" id="find_id" class="btn">아이디 찾기</button>
+      <script>
+        $('#find_id').click(function () {
+          let u_mail =$('#u_mail').val();
+          let u_tel = $('#u_tel').val();
+          console.log(u_tel,u_mail);
+          if (u_mail===""){
+            alert("메일을 입력해주세요.");
+          }else if (u_tel==="") {
+            alert("전화번호를 입력해주세요.");
+          }else {
+            $.ajax({
+              type: "get",
+              async: false,
+              url: "/FIndid",
+              data: {u_mail: u_mail, u_tel: u_tel},
+              success: function (data) {
+                console.log(data);
+                if (data === "") {
+                  alert("해당하는 아이디가 없습니다.");
+                } else {
+                  alert("아이디는" + data + "입니다.");
+                }
+              }
+            })
+          }
+        });
+      </script>
+    </form>
+  </div>
+</div>
+</div>
+</body>
+</html>

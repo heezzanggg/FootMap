@@ -1,0 +1,92 @@
+<table>
+  <h2>팀원목록</h2>
+  <tr>
+    <td>팀명</td>
+    <td th:text="${t_name}"></td>
+  </tr>
+
+  <th:block th:if="${last}<0"><h1>팀원없음</h1></th:block>
+  <th:block th:if="${last}>=0">
+    <tr>
+      <th>팀원 이름</th>
+      <th>팀원 닉네임</th>
+      <th>팀원 생일</th>
+      <th>팀원 전화번호</th>
+      <th>팀원 스텟(골/어시/커트)</th>
+      <th>팀원 관리</th>
+    </tr>
+    <th:block th:each="num : ${#numbers.sequence(0,last)}">
+      <tr th:each="myteamwon : ${myteamwon[num]}">
+        <div id="changed">
+          <td th:text="${myteamwon.u_name}"></td>
+          <td th:text="${myteamwon.u_nick}"></td>
+          <td th:text="${myteamwon.u_birth}"></td>
+          <td th:text="${myteamwon.u_tel}">Captain</td>
+          <td th:text="${myteamwon.u_goal}+'/'+${myteamwon.u_assi}+'/'+${myteamwon.u_cut}"></td>
+          <td><input type="submit" value="팀원삭제" th:code="${myteamwon.u_code}" th:tcode="${t_code}" th:onclick="myteamwon(this.getAttribute('code'),this.getAttribute('tcode'))"></td>
+        </div>
+
+      </tr>
+    </th:block>
+  </th:block>
+  <form>
+    <h3>팀원추가하기</h3>
+    <input type="text"name = "u_code" placeholder="회원CODE입력" id="user_code"oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+    <input type="hidden" name="t_code" th:value="${t_code}" id="team_code">
+    <input type="button" value="팀원중복확인" id="doublecheck">
+    <input type="submit" value="팀원추가하기" id="userinsert" disabled="disabled"><br>
+    <span id ="olmessage"></span>
+  </form>
+
+  <script th:inline="javascript">
+    $("#doublecheck").on("click",function (){
+      const t_code = $('#team_code').val();
+      const u_code = $('#user_code').val();
+      $.ajax({
+        type:"get",
+        url:"/Team/codecheck",
+        data:{u_code:u_code,t_code:t_code},
+        success:function (data){
+          if(data==1){
+            $("#olmessage").text("이미 팀원이 존재합니다.");
+            $("#olmessage").addClass("olmessagef");
+            $("#olmessage").removeClass("olmessaget");
+          }else{
+            $("#olmessage").text("등록가능한 유저입니다..");
+            $("#olmessage").addClass("olmessaget");
+            $("#olmessage").removeClass("olmessagef");
+            $("#userinsert").attr("disabled",false);
+          }
+        }
+      })
+    })
+    $("#userinsert").on("click",function (){
+      const t_code = $('#team_code').val();
+      const u_code = $('#user_code').val();
+      $.ajax({
+        type:"post",
+        url:"/Team/insertTeam",
+        data:{u_code:u_code,t_code:t_code},
+        success:function (data) {
+          alert("팀원 추가가 완료 되었습니다.");
+          location.reload();
+        },
+        error: function (data){
+          alert("잘못된 유저 코드 입니다.");
+        }
+      })
+    })
+    function myteamwon(u_code,t_code){
+      $.ajax({
+        type: "post",
+        url: "/Team/Deleteteamwon",
+        data: {u_code: u_code,t_code:t_code},
+        success: function (data) {
+          alert("삭제가 완료 되었습니다.");
+          location.reload();
+
+        }
+      })
+    }
+  </script>
+</table>

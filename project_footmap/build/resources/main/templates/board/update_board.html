@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="shared/_layout"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Hello</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="row mt-3">
+    <div class="col">
+      <form action="/board/update" method="post">
+        <div class="card">
+          <div class="card-header">
+            Update Board
+          </div>
+          <div class="card-body">
+            <div class="mb-3" hidden>
+              <label class="form-label" for="board-num" >번호</label>
+              <input type="text" id="board-num" class="form-control" name="idx" th:value="${board.idx}" readonly/>
+            </div>
+            <div class="mb-3">
+              <div class="form-floating">
+                <input type="text" id="board-title" class="form-control" name="b_title" th:value="${board.b_title}" />
+                <label class="form-label" for="board-title">제목</label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-floating">
+                <input type="text" id="board-writer" class="form-control"  th:value="${board.b_nick}+'('+${board.u_id}+')'" disabled/>
+                <label class="form-label" for="board-writer">작성자</label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-floating">
+                <input type="text" id="board-date" class="form-control"  name="reg_date" th:value="${board.reg_date}" disabled/>
+                <label class="form-label" for="board-date">작성일</label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="form-floating">
+                <textarea id="board-con" class="form-control"style="height: 300px" name="b_contents" maxlength="4000" th:value="${board.b_contents}">[[${board.b_contents}]]</textarea>
+                <label class="form-label" for="board-con">내용</label>
+              </div>
+            </div>
+          </div>
+        </div><!--end card-->
+        <br>
+        <div class="mb-3" align="right">
+          <input type="submit" class="btn btn-outline-secondary" value="수정"/>
+          <input type="button" class="btn btn-outline-secondary" value="취소" th:onclick="|location.href='@{/board/view(idx=${board.idx})}'|"/>
+        </div>
+
+      </form>
+    </div><!--end col-->
+  </div><!--end row-->
+</div><!--end fragment-->
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>메일 발송</title>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <link rel="stylesheet" href="./bootstrapt/css/bootstrap.min.css" />
+  <script src="./bootstrapt/js/bootstrap.min.js"></script>
+</head>
+<style>
+  .jb-red {
+    color: red;
+  }
+  .olmessagef {color: red; font-style: Italic;}
+  .olmessaget {color: blue; font-style: Italic;}
+</style>
+<body>
+<!--임시 비번 모달-->
+<div id="findPw" class="modal fade">
+  <div class="modal-dialog modal-dialog-centered modal-login">
+    <div class="modal-content">
+      <div class="modal-body">
+
+        <div class="container my-auto">
+          <div class="row">
+            <div class="card z-index-0 fadeIn3 fadeInBottom">
+              <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+                  <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">비밀번호 찾기</h4>
+                </div>
+              </div>
+              <div class="card-body">
+                <form class="text-start" action="/sendEmail" method="post" name="sendEmail">
+                  <p>입력한 이메일과 이름으로 임시 비밀번호가 전송됩니다.</p>
+                  <div class="input-group input-group-outline my-3">
+                    <label class="form-label">이메일</label>
+                    <input type="email" id="u_mail" name="memberEmail" class="form-control" required>
+                    <label class="form-label">이름</label>
+                    <input type="text" id="u_name" name="u_name" class="form-control" required>
+                    <button type="button" id="checkButton">이메일 중복확인</button>
+                    <span id ="olmessage"></span>
+                  </div>
+                  <div class="text-center">
+                    <button type="button" class="btn bg-gradient-primary w-100 my-4 mb-2"
+                            id="checkEmail" disabled="disabled">비밀번호 발송</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#checkButton").click(function (){
+    const u_mail = $("#u_mail").val();
+    const u_name = $("#u_name").val();
+    $.ajax({
+      type: "get",
+      async: false,
+      url: "/mailcheck",
+      data:{u_mail: u_mail, u_name: u_name},
+      success: function (data){
+        if(data == 0){
+          $("#olmessage").text("일치하는 메일이 없습니다.");
+          $("#olmessage").addClass("olmessagef");
+          $("#olmessage").removeClass("olmessaget");
+        }else{
+          $("#olmessage").text("등록된 이메일이 존재합니다.");
+          $("#olmessage").addClass("olmessaget");
+          $("#olmessage").removeClass("olmessagef");
+          $("#checkEmail").attr("disabled",false);
+        }
+      }
+    })
+  })
+    $("#checkEmail").click(function () {
+      const u_mail = $("#u_mail").val();
+      const u_name = $("#u_name").val();
+      const sendEmail = document.forms["sendEmail"];
+      $.ajax({
+        type: 'post',
+        url: '/sendEmail',
+        data: {
+          'memberEmail': u_mail, 'u_name': u_name
+        },
+        dataType: "text",
+        success: function (result) {
+          alert("이메일을 전송했습니다. 로그인페이지로 이동합니다");
+          location.href = "/login";
+        }
+
+      })
+    });
+</script>
+</body>
+</html>
